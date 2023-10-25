@@ -5,18 +5,18 @@ module spi_ctrl
     parameter SPI_IDLE = 0
 )
 (
-    /* System signal */
+    
     input clk,
     input rst,
 
-    /* User Data */
+    
     input [23:0] cmd_data,
     output reg [7:0] read_data,
     input en,
     input ready,
     output reg sink_vld,
 
-    /* SPI interface */
+    
     output reg spi_clk,
     output reg spi_enb,
     output reg spi_di,
@@ -24,14 +24,14 @@ module spi_ctrl
 );
 
 localparam SPI_DATA_WIDTH = SPI_CMD_WIDTH - SPI_ADDR_WIDTH;
-reg [1:0] state;  // Define the state variable
-reg [23:0] cmd_data_r;  // Define the registered version of cmd_data
-reg [15:0] cnt;  // Define the counter
-reg flag_read;  // Define the flag_read
-reg flag_write_addr_update;  // Define flag_write_addr_update
-reg flag_write_addr_hold;  // Define flag_write_addr_hold
-reg flag_data_update;  // Define flag_data_update
-reg flag_data_hold;  // Define flag_data_hold
+reg [1:0] state; 
+reg [23:0] cmd_data_r;  
+reg [15:0] cnt;  
+reg flag_read;  
+reg flag_write_addr_update; 
+reg flag_write_addr_hold; 
+reg flag_data_update;  
+reg flag_data_hold;  
 
 always @ (posedge clk or posedge rst or posedge en or posedge ready)
 begin
@@ -42,7 +42,7 @@ begin
         spi_di <= 1'b0;
         read_data <= 8'd0;
         sink_vld <= 1'b0;
-        state <= 2'b00;  // Initialize the state to IDLE
+        state <= 2'b00; 
         cmd_data_r <= 24'd0;
         cnt <= 16'd0;
         flag_read <= 1'b0;
@@ -54,11 +54,11 @@ begin
     else if (en)
     begin
         case (state)
-            2'b00:  // IDLE
+            2'b00: 
             begin
                 if (ready)
                 begin
-                    state <= 2'b01;  // WRITE_ADDR
+                    state <= 2'b01;  
                     spi_enb <= 1'b0;
                     cmd_data_r <= cmd_data;
                     cnt <= 16'd0;
@@ -72,7 +72,7 @@ begin
                 end
             end
 
-            2'b01:  // WRITE_ADDR
+            2'b01: 
             begin
                 spi_enb <= 1'b0;
                 if (flag_write_addr_update)
@@ -89,15 +89,15 @@ begin
                 else
                 begin
                     if (flag_read)
-                        state <= 2'b11;  // READ
+                        state <= 2'b11;  
                     else
-                        state <= 2'b10;  // WRITE_DATA
+                        state <= 2'b10; 
                     cnt <= 16'd0;
                     spi_clk <= 1'b0;
                 end
             end
 
-            2'b10:  // WRITE_DATA
+            2'b10: 
             begin
                 if (flag_data_update)
                 begin
@@ -112,13 +112,13 @@ begin
                 end
                 else
                 begin
-                    state <= 2'b00;  // IDLE
+                    state <= 2'b00; 
                     spi_clk <= 1'b0;
                     sink_vld <= 1'b1;
                 end
             end
 
-            2'b11:  // READ
+            2'b11: 
             begin
                 if (flag_data_update)
                 begin
@@ -133,12 +133,12 @@ begin
                 end
                 else
                 begin
-                    state <= 2'b00;  // IDLE
+                    state <= 2'b00;  
                     sink_vld <= 1'b1;
                 end
             end
 
-            default: state <= 2'b00;  // IDLE
+            default: state <= 2'b00; 
         endcase
     end
 end
