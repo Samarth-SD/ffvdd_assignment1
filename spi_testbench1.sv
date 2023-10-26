@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module tb_spi_ctrl;
 
     reg clk;
@@ -14,7 +12,7 @@ module tb_spi_ctrl;
     wire spi_di;
     reg spi_do;
 
-    // Instantiate the Unit Under Test (UUT)
+   
     spi_ctrl uut (
         .clk(clk), 
         .rst(rst), 
@@ -44,9 +42,9 @@ module tb_spi_ctrl;
     testing_ports inst = new();
 
     initial begin
-      	//$dumpfile("dump.vcd"); $dumpvars;
+      	$dumpfile("dump.vcd"); $dumpvars;
 
-        // Initialize Inputs
+        
         clk = 0;
         rst = 1;
         cmd_data = 24'h0;
@@ -54,10 +52,10 @@ module tb_spi_ctrl;
         ready = 0;
         spi_do = 0;
 
-        // Wait for 100 ns for global reset to finish
+        
         #100;
 
-        // De-assert reset
+        
         rst = 0;
 
       repeat(1000) @(negedge clk);
@@ -77,12 +75,12 @@ module tb_spi_ctrl;
     end
     always@(clk) begin
             if (clk) begin
-                // Randomly toggle spi_do at rising edge of clk
+                
                 spi_do = $random & 1'b1; 
               cmd_data = $random & {24{1'b1}};
             end
             if (~clk) begin
-                // Randomly set ready at falling edge of clk
+                
                 ready = $random & 1'b1; 
                 en = $random & 1'b1;
             end
